@@ -1,0 +1,17 @@
+# Ignore large video files
+Videos/
+*.mp4
+*.MOV
+*.avi
+*.mkv
+
+# Ignore installation binaries
+*.exe
+*.msi
+*.zip
+*.7z
+
+# Ignore OS files
+desktop.ini
+.DS_Store
+Thumbs.db

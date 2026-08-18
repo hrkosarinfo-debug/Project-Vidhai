@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Status Dashboard (Fully Editable)</title>
+    <!-- Google Fonts - Plus Jakarta Sans -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        /* ── Professional Color Palette (No Stark Black/White) ── */
+        :root {
+            /* Light Theme: Sophisticated Slate & Muted Blue (No pure white backgrounds, no pure black text) */
+            --bg-primary: #f1f5f9;
+            --bg-secondary: #e2e8f0;
+            --bg-card: rgba(255, 255, 255, 0.75);
+            --border-color: #cbd5e1;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            
+            --accent-color: #4f46e5;
+            --accent-hover: #4338ca;
+            --accent-gradient: linear-gradient(135deg, #4f46e5, #0ea5e9);
+            --accent-light: rgba(79, 70, 229, 0.08);
+            
+            --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+            --shadow-lg: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.08);
+            
+            /* Status Badge Colors */
+            --badge-bg-monthly: #dbeafe;
+            --badge-text-monthly: #1d4ed8;
+            --badge-bg-project: #ede9fe;
+            --badge-text-project: #6d28d9;
+            --badge-bg-hc: #ccfbf1;
+            --badge-text-hc: #0f766e;
+            --badge-bg-hourly: #fef3c7;
+            --badge-text-hourly: #b45309;
+
+            --avail-bg: #dcfce7;
+            --avail-text: #166534;
+            --unavail-bg: #fee2e2;
+            --unavail-text: #991b1b;
+            --leave-bg: #ffedd5;
+            --leave-text: #9a3412;
+            
+            --danger-color: #ef4444;
+            --danger-hover: #dc2626;
+            --danger-light: rgba(239, 68, 68, 0.06);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme: Refined deep navy, obsidian slate, teal accents (No pure black backgrounds, no stark white text) */
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #121829;
+            --bg-card: rgba(18, 24, 41, 0.75);
+            --border-color: rgba(148, 163, 184, 0.12);
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --accent-color: #6366f1;
+            --accent-hover: #818cf8;
+            --accent-gradient: linear-gradient(135deg, #6366f1, #14b8a6);
+            --accent-light: rgba(99, 102, 241, 0.12);
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -2px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.35), 0 4px 6px -4px rgba(0, 0, 0, 0.35);
+            
+            /* Status Badge Colors */
+            --badge-bg-monthly: rgba(59, 130, 246, 0.15);
+            --badge-text-monthly: #60a5fa;
+            --badge-bg-project: rgba(139, 92, 246, 0.15);
+            --badge-text-project: #c084fc;
+            --badge-bg-hc: rgba(20, 184, 166, 0.15);
+            --badge-text-hc: #2dd4bf;
+            --badge-bg-hourly: rgba(245, 158, 11, 0.15);
+            --badge-text-hourly: #fbbf24;
+
+            --avail-bg: rgba(16, 185, 129, 0.15);
+            --avail-text: #34d399;
+            --unavail-bg: rgba(239, 68, 68, 0.15);
+            --unavail-text: #f87171;
+            --leave-bg: rgba(249, 115, 22, 0.15);
+            --leave-text: #fb923c;
+            
+            --danger-color: #f87171;
+            --danger-hover: #ef4444;
+            --danger-light: rgba(248, 113, 113, 0.12);
+        }
+
+        /* ── Reset & Base Styles ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-primary);
+            background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.04) 0px, transparent 50%),
+                              radial-gradient(at 50% 0%, rgba(20, 184, 166, 0.04) 0px, transparent 50%),
+                              radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.04) 0px, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px 16px;
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* ── Premium Cards ── */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            padding: 16px 20px;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        /* ── Dashboard Header ── */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+            padding: 20px 24px;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent-gradient);
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .header-left h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            outline: none;
+            border-radius: 4px;
+            padding: 2px 4px;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+
+        .header-left h1:focus, .header-left h1:hover {
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 0 2px var(--accent-color);
+        }
+
+        [data-theme="light"] .header-left h1:focus, [data-theme="light"] .header-left h1:hover {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .date-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 30px;
+            width: fit-content;
+            border: 1px solid var(--border-color);
+        }
+
+        [data-theme="light"] .date-container {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        #dashboard-date {
+            font-size: 12px;
+            font-weight: 600;
+            outline: none;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .calendar-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .calendar-btn:hover {
+            color: var(--accent-color);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .stat-chip {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 12.5px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-chip i {
+            color: var(--accent-color);
+        }
+
+        .stat-chip .num {
+            font-weight: 800;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        /* ── Interactive Toolbar ── */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 10px 16px;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 8px 14px 8px 36px;
+            font-size: 13px;
+            font-family: inherit;
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        /* ── Standard Button System ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+        }
+
+        .btn:hover {
+            background: var(--border-color);
+            color: var(--text-primary);
+            border-color: var(--text-muted);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: #ffffff;
+            border: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.95;
+            color: #ffffff;
+            box-shadow: 0 0 10px var(--accent-light);
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 50%;
+        }
+
+        /* ── Table Styling & Cards ── */
+        .table-wrapper {
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            box-shadow: var(--shadow-md);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+            table-layout: fixed; /* Respect specified widths so Open Items stretches */
+        }
+
+        thead {
+            background: var(--bg-primary);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        th {
+            padding: 12px 14px;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        th i {
+            margin-right: 4px;
+            color: var(--accent-color);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.15s;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.012);
+        }
+
+        [data-theme="light"] tbody tr:hover {
+            background: rgba(0, 0, 0, 0.003);
+        }
+
+        td {
+            padding: 10px 14px;
+            vertical-align: top;
+            line-height: 1.4;
+        }
+
+        /* Drag column */
+        .drag-column {
+            width: 35px;
+            padding-right: 0;
+            vertical-align: middle;
+        }
+
+        .drag-handle {
+            cursor: grab;
+            color: var(--text-muted);
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .drag-handle:hover {
+            background: var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        tr.dragging {
+            opacity: 0.4;
+            background: var(--accent-light) !important;
+            border: 1px dashed var(--accent-color);
+        }
+
+        tr.drag-over {
+            border-top: 2px solid var(--accent-color);
+        }
+
+        /* ── Project Name ── */
+        .project-name-cell {
+            font-weight: 700;
+            color: var(--text-primary);
+            outline: none;
+            padding: 4px 6px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            word-wrap: break-word;
+        }
+
+        .project-name-cell:focus, .project-name-cell:hover {
+            background: var(--bg-primary);
+            box-shadow: 0 0 0 1px var(--border-color);
+        }
+
+        /* ── Badge Styling ── */
+        .mode-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: fit-content;
+            white-space: nowrap;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .mode-badge:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.05);
+            box-shadow: var(--shadow-md);
+        }
+
+        .mode-badge.monthly {
+            background: var(--badge-bg-monthly);
+            color: var(--badge-text-monthly);
+        }
+
+        .mode-badge.project {
+            background: var(--badge-bg-project);
+            color: var(--badge-text-project);
+        }
+
+        .mode-badge.hc {
+            background: var(--badge-bg-hc);
+            color: var(--badge-text-hc);
+        }
+
+        .mode-badge.hourly {
+            background: var(--badge-bg-hourly);
+            color: var(--badge-text-hourly);
+        }
+
+        .mode-badge.custom {
+            background: var(--border-color);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* ── Single-Cursor Action Items List ── */
+        .items-list-container {
+            width: 100%;
+        }
+
+        .items-list {
+            list-style-type: disc;
+            padding-left: 20px;
+            outline: none;
+            border-radius: 6px;
+            padding: 6px 8px 6px 16px;
+            transition: all 0.2s;
+        }
+
+        .items-list:hover {
+            background: var(--bg-primary);
+            box-shadow: 0 0 0 1px var(--border-color);
+        }
+
+        .items-list:focus {
+            background: var(--bg-primary);
+            box-shadow: 0 0 0 2px var(--accent-color);
+        }
+
+        .items-list li {
+            margin-bottom: 4px;
+            font-size: 12.5px;
+            color: var(--text-primary);
+            line-height: 1.45;
+        }
+
+        .items-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Sublist support nested styles */
+        .items-list ul, .items-list ol {
+            padding-left: 16px;
+            margin-top: 2px;
+            list-style-type: circle;
+        }
+
+        .add-item-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 2px;
+            transition: all 0.2s;
+        }
+
+        .add-item-btn:hover {
+            background: var(--accent-light);
+            color: var(--accent-hover);
+        }
+
+        /* ── Owner Chip List ── */
+        .owner-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .owner-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--accent-light);
+            color: var(--accent-color);
+            padding: 2px 8px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            transition: all 0.2s;
+        }
+
+        .owner-chip [contenteditable="true"] {
+            outline: none;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        .owner-chip [contenteditable="true"]:focus {
+            background: var(--bg-secondary);
+        }
+
+        .remove-owner-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            cursor: pointer;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .remove-owner-btn:hover {
+            background: var(--danger-light);
+            color: var(--danger-color);
+        }
+
+        .add-owner-btn {
+            background: none;
+            border: 1px dashed var(--accent-color);
+            color: var(--accent-color);
+            padding: 2px 8px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .add-owner-btn:hover {
+            background: var(--accent-color);
+            color: #ffffff;
+            border-style: solid;
+        }
+
+        /* ── Resource Availability ── */
+        .avail-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .avail-status-selector {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 20px;
+            width: fit-content;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .avail-status-selector.available {
+            background: var(--avail-bg);
+            color: var(--avail-text);
+        }
+
+        .avail-status-selector.unavailable {
+            background: var(--unavail-bg);
+            color: var(--unavail-text);
+        }
+
+        .avail-status-selector.on-leave {
+            background: var(--leave-bg);
+            color: var(--leave-text);
+        }
+
+        .avail-status-selector:hover {
+            filter: brightness(0.95);
+            transform: scale(1.02);
+        }
+
+        .avail-vacation {
+            font-size: 11px;
+            color: var(--text-muted);
+            outline: none;
+            min-height: 14px;
+            padding: 2px 4px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            word-wrap: break-word;
+        }
+
+        .avail-vacation:focus, .avail-vacation:hover {
+            background: var(--bg-primary);
+            box-shadow: 0 0 0 1px var(--border-color);
+        }
+
+        /* ── Actions Column ── */
+        .actions-column {
+            vertical-align: middle;
+            width: 45px;
+            padding-left: 0;
+            text-align: center;
+        }
+
+        .row-delete-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .row-delete-btn:hover {
+            background: var(--danger-light);
+            color: var(--danger-color);
+        }
+
+        /* ── Floating Dropdowns ── */
+        .custom-dropdown-menu {
+            position: absolute;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: var(--shadow-lg);
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 200px;
+            z-index: 9999;
+            animation: scaleUp 0.12s ease-out;
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .custom-dropdown-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .custom-dropdown-item:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 3px 0;
+        }
+
+        .custom-dropdown-item-input {
+            padding: 4px 6px;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .legend-dot.monthly { background: #2563eb; }
+        .legend-dot.project { background: #7c3aed; }
+        .legend-dot.hc { background: #0d9488; }
+        .legend-dot.hourly { background: #d97706; }
+
+        .avail-dot {
+            font-size: 11px;
+        }
+        .avail-dot.available { color: #10b981; }
+        .avail-dot.unavailable { color: #ef4444; }
+        .avail-dot.on-leave { color: #f97316; }
+
+        /* ── Toasts ── */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 99999;
+        }
+
+        .toast {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 16px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards, fadeOut 0.3s 2.7s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+
+        /* ── Legend Info Bar ── */
+        .legend-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 20px;
+            padding: 12px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border-color);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            margin-top: 6px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            padding: 0 4px;
+        }
+
+        /* ── Micro-Animations ── */
+        @keyframes highlightGlow {
+            0% { background: var(--accent-light); }
+            100% { background: transparent; }
+        }
+
+        .highlight-new {
+            animation: highlightGlow 2s ease-out;
+        }
+
+        /* ── Mobile Layout (< 900px) ── */
+        @media (max-width: 900px) {
+            body {
+                padding: 16px 10px;
+            }
+
+            .container {
+                gap: 12px;
+            }
+
+            .header {
+                padding: 16px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-right {
+                justify-content: flex-start;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 12px;
+            }
+
+            .toolbar-left {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-wrapper {
+                max-width: none;
+            }
+
+            .legend-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .legend-divider {
+                display: none;
+            }
+
+            /* Responsive Table Conversion */
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tr {
+                margin-bottom: 16px;
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                background: var(--bg-secondary);
+                padding: 16px;
+                box-shadow: var(--shadow-md);
+                position: relative;
+            }
+
+            td {
+                padding: 8px 0;
+                border: none !important;
+                position: relative;
+                padding-left: 38%;
+                min-height: 36px;
+            }
+
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 33%;
+                font-weight: 800;
+                color: var(--text-muted);
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                top: 10px;
+            }
+
+            .drag-column {
+                display: none;
+            }
+
+            .actions-column {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                padding-left: 0;
+                width: auto;
+            }
+
+            .actions-column::before {
+                display: none;
+            }
+        }
+
+        /* ── PDF / Print Styles ── */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                padding: 0 !important;
+            }
+
+            .container {
+                max-width: 100% !important;
+                gap: 12px !important;
+            }
+
+            .header {
+                border: none !important;
+                box-shadow: none !important;
+                background: none !important;
+                padding: 10px 0 !important;
+            }
+
+            .header::before {
+                display: none !important;
+            }
+
+            .toolbar, 
+            .add-item-btn, 
+            .drag-column, 
+            .actions-column,
+            .toast-container,
+            .custom-dropdown-menu {
+                display: none !important;
+            }
+
+            .table-wrapper {
+                box-shadow: none !important;
+                border: 1px solid #cbd5e1 !important;
+                overflow: visible !important;
+            }
+
+            table {
+                width: 100% !important;
+                min-width: unset !important;
+                table-layout: fixed !important;
+            }
+
+            tr {
+                page-break-inside: avoid;
+            }
+
+            th {
+                background: #f1f5f9 !important;
+                color: #1e293b !important;
+                border-bottom: 2px solid #cbd5e1 !important;
+                padding: 8px 10px !important;
+            }
+
+            td {
+                border-bottom: 1px solid #e2e8f0 !important;
+                padding: 8px 10px !important;
+            }
+
+            .owner-chip {
+                border: 1px solid #cbd5e1 !important;
+                background: #f1f5f9 !important;
+                color: #1e293b !important;
+            }
+
+            .mode-badge {
+                border: 1px solid #cbd5e1 !important;
+                background: #f1f5f9 !important;
+                color: #1e293b !important;
+            }
+
+            .avail-status-selector {
+                border: 1px solid #cbd5e1 !important;
+                background: #f1f5f9 !important;
+                color: #1e293b !important;
+            }
+
+            [contenteditable="true"] {
+                outline: none !important;
+                border: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ═══ HEADER CARD ═══ -->
+        <header class="header glass-card">
+            <div class="header-left">
+                <h1 id="dashboard-title" contenteditable="true" oninput="updateTitle(this.innerText)" onblur="saveTextState()">Project Status Dashboard</h1>
+                <div class="date-container">
+                    <span id="dashboard-date" contenteditable="true" oninput="updateDate(this.innerText)" onblur="saveTextState()">Tuesday, 11 August 2026</span>
+                    <button class="calendar-btn" onclick="openDatePicker()" title="Select date"><i class="far fa-calendar-alt"></i></button>
+                    <input type="date" id="date-picker-input" style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;" onchange="onDatePickerChange(this.value)">
+                </div>
+            </div>
+            <div class="header-right">
+                <span class="stat-chip">
+                    <i class="fas fa-folder-open"></i>
+                    <span id="project-count" class="num">0</span> Projects
+                </span>
+                <span id="overall-status" class="stat-chip">
+                    <i class="fas fa-check-circle"></i>
+                    All Available
+                </span>
+            </div>
+        </header>
+
+        <!-- ═══ INTERACTIVE TOOLBAR ═══ -->
+        <section class="toolbar glass-card">
+            <div class="toolbar-left">
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" class="search-input" placeholder="Search projects, owners, open items..." oninput="render()">
+                </div>
+                <button class="btn btn-primary" onclick="addProject()"><i class="fas fa-plus"></i> Add Project</button>
+            </div>
+            <div class="toolbar-right">
+                <button id="undo-btn" class="btn btn-icon" onclick="undo()" title="Undo (Ctrl+Z)" disabled><i class="fas fa-undo"></i></button>
+                <button id="redo-btn" class="btn btn-icon" onclick="redo()" title="Redo (Ctrl+Y)" disabled><i class="fas fa-redo"></i></button>
+                <button class="btn" onclick="exportData()" title="Export configuration to JSON"><i class="fas fa-download"></i> Export</button>
+                <button class="btn" onclick="triggerImport()" title="Import configuration from JSON"><i class="fas fa-upload"></i> Import</button>
+                <input type="file" id="import-file-input" style="display: none;" onchange="importData(event)">
+                <button class="btn btn-icon" onclick="window.print()" title="Print Dashboard / Save PDF"><i class="fas fa-print"></i></button>
+                <button class="btn btn-icon" onclick="toggleTheme()" title="Toggle Dark/Light Mode"><i class="fas fa-sun" id="theme-toggle-icon"></i></button>
+            </div>
+        </section>
+
+        <!-- ═══ LEGEND BAR ═══ -->
+        <section class="legend-bar">
+            <span class="legend-item">
+                <span class="legend-dot monthly"></span> 1‑Monthly Support
+            </span>
+            <span class="legend-item">
+                <span class="legend-dot project"></span> 2‑Project Implementation
+            </span>
+            <span class="legend-item">
+                <span class="legend-dot hc"></span> 3‑HC Support
+            </span>
+            <span class="legend-item">
+                <span class="legend-dot hourly"></span> 4‑Hourly
+            </span>
+            <span class="legend-divider"></span>
+            <span class="legend-item">
+                <span class="avail-dot available">●</span> Available
+            </span>
+            <span class="legend-item">
+                <span class="avail-dot unavailable">●</span> Unavailable
+            </span>
+            <span class="legend-item">
+                <span class="avail-dot on-leave">●</span> On Leave
+            </span>
+        </section>
+
+        <!-- ═══ DATA TABLE ═══ -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 35px;"></th>
+                        <th style="width: 140px;"><i class="fas fa-tag"></i> Mode / Phase</th>
+                        <th style="width: 150px;"><i class="fas fa-project-diagram"></i> Project</th>
+                        <th><i class="fas fa-list-ul"></i> Open Items</th>
+                        <th style="width: 130px;"><i class="fas fa-users"></i> Owner</th>
+                        <th style="width: 180px;"><i class="fas fa-clock"></i> Resource Availability</th>
+                        <th style="width: 45px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Dynamic project rows loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ═══ FOOTER ═══ -->
+        <footer class="footer">
+            <span><i class="fas fa-history"></i> Press <kbd>Ctrl+Z</kbd> / <kbd>Ctrl+Y</kbd> to Undo/Redo edits</span>
+            <span><i class="fas fa-pencil-alt"></i> Dashboard is 100% editable. Drag handle <i class="fas fa-grip-vertical"></i> to reorder.</span>
+        </footer>
+
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ── APPLICATION SCRIPT ── -->
+    <script>
+        // Default Template Projects
+        const DEFAULT_PROJECTS = [
+            {
+                id: "proj-1",
+                mode: "1-Monthly Support",
+                name: "SOA-OSB Support",
+                openItems: [
+                    "Working on Chrome Fire Base API for KM QA",
+                    "Timeout changes done on OHS KM DEV nodes"
+                ],
+                owners: ["Kishore Kotha"],
+                availability: {
+                    status: "Available",
+                    vacation: "Upcoming Vacation — NIL"
+                }
+            },
+            {
+                id: "proj-2",
+                mode: "1-Monthly Support",
+                name: "Diyar Paneela Support",
+                openItems: [
+                    "Worked on Production Database Health Check reports",
+                    "Worked on Oracle APEX Database Health Check reports",
+                    "Worked on User access-related issues",
+                    "Worked on Database Performance issues in Production",
+                    "Granted read-only access to users in Production",
+                    "Out-of-scope: copying DR-side RMAN & EXPDP backups, validating ZFS mount points"
+                ],
+                owners: ["Paneela"],
+                availability: {
+                    status: "Available",
+                    vacation: "Upcoming Vacation — NIL"
+                }
+            },
+            {
+                id: "proj-3",
+                mode: "2-Project Implementation",
+                name: "DD OOREDOO HRMS",
+                openItems: [
+                    "Address high-priority issues: tickets #163, #140, #141, #89, #146",
+                    "Resolve critical defect: deletion process for Dependent Second Approvals",
+                    "Troubleshoot ERP/EBS login failure (incorrect password credentials)",
+                    "Correct ApplyLeave workflow logic (hardcoded Sat/Sun holidays)",
+                    "Maintain project board: manually transition backlog items into active Jira sprint"
+                ],
+                owners: ["Prem", "Sohail Ali"],
+                availability: {
+                    status: "Available",
+                    vacation: "Upcoming Vacation — NIL"
+                }
+            },
+            {
+                id: "proj-4",
+                mode: "2-Project Implementation",
+                name: "DD NREC OCI Migration",
+                openItems: [
+                    "UAT Clone release document finalized & submitted (with OCI console screenshots)",
+                    "System status verification (workflows disabled) included in final report",
+                    "Migration & cloning complete; project now in user testing phase",
+                    "Technical coordination for upcoming DR Drill commenced (pending customer approval)",
+                    "Recommendation: revert DR site to physical standby for data sync during testing",
+                    "Environment available for customer testing (expected to continue several days)"
+                ],
+                owners: ["Kirti", "Arun", "Amar"],
+                availability: {
+                    status: "Available",
+                    vacation: "Upcoming Vacation — NIL"
+                }
+            },
+            {
+                id: "proj-5",
+                mode: "2-Project Implementation",
+                name: "Almailem Loyalty",
+                openItems: [
+                    "UI/UX refinements on login page: text capitalization, punctuation, footer tagline repositioning",
+                    "Login interface finalized & frozen after user acceptance",
+                    "Registration interface: removed \"(OPTIONAL)\" descriptor from input fields",
+                    "Functional loyalty app deployed to UAT via ORDS for stakeholder review"
+                ],
+                owners: ["Prem"],
+                availability: {
+                    status: "Available",
+                    vacation: "Upcoming Vacation — NIL"
+                }
+            },
+            {
+                id: "proj-6",
+                mode: "3-HC Support",
+                name: "OCI KMEFIC",
+                openItems: [
+                    "SSL certificates updated on WAF policies & Load Balancers (internal VM certs remain customer responsibility)",
+                    "Storage expansion: 200GB provisioned for /u02 directory",
+                    "Production-to-UAT migration initiated via RMAN restore from shared backup",
+                    "<strong>⚠️ Critical:</strong> On-Prem UAT server became non-responsive due to memory pressure",
+                    "Analysis: 15GB RAM insufficient for 16.9GB combined SGA+PGA",
+                    "<strong>Urgent request:</strong> increase memory from 15GB → 32GB",
+                    "Migration activities <strong>suspended</strong> until memory provisioned & connectivity restored"
+                ],
+                owners: ["Gayathri"],
+                availability: {
+                    status: "Available",
+                    vacation: "Upcoming Vacation — NIL"
+                }
+            },
+            {
+                id: "proj-7",
+                mode: "4-Hourly",
+                name: "DD RIC",
+                openItems: [
+                    "FastAPI Infrastructure, Software & Development Server setup complete",
+                    "⏳ Need to know the API that has to be built"
+                ],
+                owners: ["Kumar"],
+                availability: {
+                    status: "Available",
+                    vacation: "Upcoming Vacation — NIL"
+                }
+            },
+            {
+                id: "proj-8",
+                mode: "4-Hourly",
+                name: "DD Altijaria",
+                openItems: [
+                    "Management of EBS DR project infrastructure on OCI",
+                    "Review & presentation of CMDB template (technical parameters & asset requirements)",
+                    "Identification & collection of technical data points from customer for OCI CMDB",
+                    "Alignment with technical action items from previous MoM",
+                    "Technical walkthrough to explain CMDB components & environmental dependencies",
+                    "Documentation of technical updates in centralized project tracking sheet",
+                    "Coordination of sync call to finalize technical requirements & next steps for DR build-out"
+                ],
+                owners: ["Amar"],
+                availability: {
+                    status: "Available",
+                    vacation: "Upcoming Vacation — NIL"
+                }
+            },
+            {
+                id: "proj-9",
+                mode: "4-Hourly",
+                name: "DD Tijaria",
+                openItems: [
+                    "⏳ Waiting for OCI Tenancy"
+                ],
+                owners: ["Kirti"],
+                availability: {
+                    status: "Available",
+                    vacation: "Upcoming Vacation — NIL"
+                }
+            }
+        ];
+
+        // Active State & History Undo-Redo Stack
+        let state = {};
+        const history = [];
+        let historyIndex = -1;
+        let debounceTimer = null;
+        let activeDropdown = null;
+
+        // On Load initialization
+        window.onload = function() {
+            const savedState = localStorage.getItem('project_dashboard_state');
+            if (savedState) {
+                try {
+                    state = JSON.parse(savedState);
+                } catch(e) {
+                    console.error("Error loading saved state, resetting...", e);
+                    loadDefaultState();
+                }
+            } else {
+                loadDefaultState();
+            }
+
+            // Set up state history pointer
+            history.push(JSON.parse(JSON.stringify(state)));
+            historyIndex = 0;
+
+            // Apply Theme
+            const savedTheme = localStorage.getItem('project_dashboard_theme') || state.theme || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            state.theme = savedTheme;
+            updateThemeIcon(savedTheme);
+
+            render();
+            updateUndoRedoButtons();
+        };
+
+        function loadDefaultState() {
+            state = {
+                theme: 'dark',
+                title: "Project Status Dashboard",
+                date: "Tuesday, 11 August 2026",
+                projects: JSON.parse(JSON.stringify(DEFAULT_PROJECTS))
+            };
+        }
+
+        // Pushing updates to the Undo/Redo History Stack
+        function pushState(newState) {
+            const clone = JSON.parse(JSON.stringify(newState));
+            // Discard any redos
+            history.splice(historyIndex + 1);
+            history.push(clone);
+            historyIndex = history.length - 1;
+
+            localStorage.setItem('project_dashboard_state', JSON.stringify(clone));
+            updateStats();
+            updateUndoRedoButtons();
+        }
+
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                state = JSON.parse(JSON.stringify(history[historyIndex]));
+                localStorage.setItem('project_dashboard_state', JSON.stringify(state));
+                render();
+                showToast("Undo applied");
+                updateUndoRedoButtons();
+            }
+        }
+
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                state = JSON.parse(JSON.stringify(history[historyIndex]));
+                localStorage.setItem('project_dashboard_state', JSON.stringify(state));
+                render();
+                showToast("Redo applied");
+                updateUndoRedoButtons();
+            }
+        }
+
+        function updateUndoRedoButtons() {
+            document.getElementById('undo-btn').disabled = (historyIndex <= 0);
+            document.getElementById('redo-btn').disabled = (historyIndex >= history.length - 1);
+        }
+
+        // Keyboard Shortcuts for Undo / Redo
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'z') {
+                e.preventDefault();
+                undo();
+            } else if (e.ctrlKey && e.key === 'y') {
+                e.preventDefault();
+                redo();
+            }
+        });
+
+        // ── Rendering Functions ──
+        function render() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            
+            // Set Static Text (Avoiding losing focus if actively typing)
+            if (document.activeElement !== document.getElementById('dashboard-title')) {
+                document.getElementById('dashboard-title').innerText = state.title;
+            }
+            if (document.activeElement !== document.getElementById('dashboard-date')) {
+                document.getElementById('dashboard-date').innerText = state.date;
+            }
+
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            const filtered = state.projects.filter(p => {
+                const matchName = p.name.toLowerCase().includes(query);
+                const matchMode = p.mode.toLowerCase().includes(query);
+                const matchOwners = p.owners.some(o => o.toLowerCase().includes(query));
+                const matchItems = p.openItems.some(i => i.toLowerCase().includes(query));
+                return matchName || matchMode || matchOwners || matchItems;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                            <i class="fas fa-folder-open" style="font-size: 24px; margin-bottom: 8px; display: block; opacity: 0.5;"></i>
+                            No matching projects found.
+                        </td>
+                    </tr>
+                `;
+                updateStats();
+                return;
+            }
+
+            const isSearching = query.length > 0;
+
+            filtered.forEach(p => {
+                const originalIndex = state.projects.findIndex(x => x.id === p.id);
+                const tr = document.createElement('tr');
+                tr.id = `row-${p.id}`;
+                tr.className = 'project-row';
+
+                // Drag & Drop event bindings
+                if (!isSearching) {
+                    tr.ondragover = (e) => onRowDragOver(e, originalIndex);
+                    tr.ondragleave = (e) => onRowDragLeave(e);
+                    tr.ondrop = (e) => onRowDrop(e, originalIndex);
+                }
+
+                const badgeClass = getBadgeClass(p.mode);
+                const badgeIcon = getBadgeIcon(p.mode);
+
+                tr.innerHTML = `
+                    <td class="drag-column" data-label="Reorder">
+                        <div class="drag-handle" onmousedown="enableRowDrag('${p.id}')" onmouseup="disableRowDrag('${p.id}')" title="Drag to reorder"><i class="fas fa-grip-vertical"></i></div>
+                    </td>
+                    <td data-label="Mode / Phase">
+                        <span class="mode-badge ${badgeClass}" onclick="showModeDropdown('${p.id}', this)">
+                            ${badgeIcon} <span>${p.mode}</span>
+                        </span>
+                    </td>
+                    <td data-label="Project">
+                        <div class="project-name-cell" contenteditable="true" oninput="onProjectNameInput('${p.id}', this.innerHTML)" onblur="saveTextState()">
+                            ${p.name}
+                        </div>
+                    </td>
+                    <td data-label="Open Items">
+                        <div class="items-list-container">
+                            <ul class="items-list" contenteditable="true" oninput="onOpenItemsInput('${p.id}')" onblur="onOpenItemsBlur('${p.id}')">
+                                ${p.openItems.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                            <button class="add-item-btn" onclick="addOpenItem('${p.id}')"><i class="fas fa-plus"></i> Add Item</button>
+                        </div>
+                    </td>
+                    <td data-label="Owner">
+                        <div class="owner-list">
+                            ${p.owners.map((owner, i) => `
+                                <span class="owner-chip">
+                                    <span contenteditable="true" oninput="updateOwnerName('${p.id}', ${i}, this.innerText)" onblur="saveTextState()">${owner}</span>
+                                    <button class="remove-owner-btn" onclick="removeOwner('${p.id}', ${i})" title="Remove"><i class="fas fa-times"></i></button>
+                                </span>
+                            `).join('')}
+                            <button class="add-owner-btn" onclick="addOwner('${p.id}')"><i class="fas fa-plus"></i> Add</button>
+                        </div>
+                    </td>
+                    <td data-label="Resource Availability">
+                        <div class="avail-container">
+                            <div class="avail-status-selector ${p.availability.status.toLowerCase().replace(' ', '-')}" onclick="showAvailDropdown('${p.id}', this)">
+                                <i class="fas fa-circle"></i>
+                                <span>${p.availability.status}</span>
+                                <i class="fas fa-chevron-down" style="font-size:10px; margin-left:4px; opacity:0.6;"></i>
+                            </div>
+                            <div class="avail-vacation" contenteditable="true" oninput="updateVacation('${p.id}', this.innerHTML)" onblur="saveTextState()">
+                                ${p.availability.vacation}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="actions-column" data-label="Actions">
+                        <button class="row-delete-btn" onclick="deleteProject('${p.id}')" title="Delete project"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updateStats();
+        }
+
+        // ── Dynamic Summary Updates ──
+        function updateStats() {
+            document.getElementById('project-count').innerText = state.projects.length;
+
+            // Overall Availability Badge
+            let unavailableCount = 0;
+            let leaveCount = 0;
+            state.projects.forEach(p => {
+                if (p.availability.status === 'Unavailable') unavailableCount++;
+                else if (p.availability.status === 'On Leave') leaveCount++;
+            });
+
+            const overallBadge = document.getElementById('overall-status');
+            if (unavailableCount === 0 && leaveCount === 0) {
+                overallBadge.innerHTML = `<i class="fas fa-check-circle" style="color:var(--avail-text)"></i> All Available`;
+                overallBadge.style.background = 'var(--avail-bg)';
+                overallBadge.style.color = 'var(--avail-text)';
+            } else {
+                let text = [];
+                if (unavailableCount > 0) text.push(`${unavailableCount} Away`);
+                if (leaveCount > 0) text.push(`${leaveCount} On Leave`);
+                overallBadge.innerHTML = `<i class="fas fa-exclamation-circle" style="color:var(--leave-text)"></i> ${text.join(', ')}`;
+                overallBadge.style.background = 'var(--leave-bg)';
+                overallBadge.style.color = 'var(--leave-text)';
+            }
+        }
+
+        // ── Debounced Input Autosaving ──
+        function debounceSave() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                pushState(state);
+            }, 1000);
+        }
+
+        function saveTextState() {
+            if (debounceTimer) {
+                clearTimeout(debounceTimer);
+                pushState(state);
+                debounceTimer = null;
+            }
+        }
+
+        // Title and Date
+        function updateTitle(val) {
+            state.title = val;
+            debounceSave();
+        }
+
+        function updateDate(val) {
+            state.date = val;
+            debounceSave();
+        }
+
+        // Native date selection formatter
+        function openDatePicker() {
+            document.getElementById('date-picker-input').showPicker();
+        }
+
+        function onDatePickerChange(val) {
+            if (!val) return;
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const formatted = new Date(val).toLocaleDateString('en-US', options);
+            state.date = formatted;
+            document.getElementById('dashboard-date').innerText = formatted;
+            pushState(state);
+        }
+
+        // Project Inline Edits
+        function onProjectNameInput(id, val) {
+            const p = state.projects.find(x => x.id === id);
+            if (p) {
+                p.name = val;
+                debounceSave();
+            }
+        }
+
+        // Single Cursor List Updates
+        function onOpenItemsInput(projectId) {
+            const p = state.projects.find(x => x.id === projectId);
+            if (p) {
+                const listEl = document.querySelector(`#row-${projectId} .items-list`);
+                if (listEl) {
+                    const items = Array.from(listEl.children)
+                        .filter(el => el.tagName === 'LI')
+                        .map(el => el.innerHTML);
+                    p.openItems = items;
+                    debounceSave();
+                }
+            }
+        }
+
+        function onOpenItemsBlur(projectId) {
+            if (debounceTimer) {
+                clearTimeout(debounceTimer);
+                debounceTimer = null;
+            }
+            
+            const p = state.projects.find(x => x.id === projectId);
+            if (p) {
+                p.openItems = p.openItems
+                    .map(item => item.replace(/<br>/g, '').trim())
+                    .filter(item => item.length > 0);
+                    
+                if (p.openItems.length === 0) {
+                    p.openItems = ["Click to edit task"];
+                }
+            }
+            pushState(state);
+            render();
+        }
+
+        function addOpenItem(projectId) {
+            const listEl = document.querySelector(`#row-${projectId} .items-list`);
+            if (listEl) {
+                const li = document.createElement('li');
+                li.innerHTML = "New task item";
+                listEl.appendChild(li);
+                
+                li.focus();
+                
+                const range = document.createRange();
+                range.selectNodeContents(li);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+                
+                onOpenItemsInput(projectId);
+            }
+        }
+
+        // Multi Owner Inline Edits
+        function updateOwnerName(projectId, index, val) {
+            const p = state.projects.find(x => x.id === projectId);
+            if (p) {
+                p.owners[index] = val;
+                debounceSave();
+            }
+        }
+
+        function updateVacation(projectId, val) {
+            const p = state.projects.find(x => x.id === projectId);
+            if (p) {
+                p.availability.vacation = val;
+                debounceSave();
+            }
+        }
+
+        // ── Owner Chips Add/Remove ──
+        function addOwner(projectId) {
+            const p = state.projects.find(x => x.id === projectId);
+            if (p) {
+                p.owners.push("New Owner");
+                pushState(state);
+                render();
+
+                setTimeout(() => {
+                    const row = document.getElementById(`row-${projectId}`);
+                    if (row) {
+                        const chips = row.querySelectorAll('.owner-chip [contenteditable="true"]');
+                        if (chips.length > 0) {
+                            const lastChip = chips[chips.length - 1];
+                            lastChip.focus();
+                            document.execCommand('selectAll', false, null);
+                        }
+                    }
+                }, 50);
+            }
+        }
+
+        function removeOwner(projectId, index) {
+            const p = state.projects.find(x => x.id === projectId);
+            if (p) {
+                p.owners.splice(index, 1);
+                pushState(state);
+                render();
+                showToast("Owner removed", "fa-times");
+            }
+        }
+
+        // ── Floating Dropdown Logic ──
+        function closeActiveDropdown() {
+            if (activeDropdown) {
+                activeDropdown.remove();
+                activeDropdown = null;
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            if (activeDropdown && !activeDropdown.contains(e.target) && !e.target.closest('.mode-badge') && !e.target.closest('.avail-status-selector')) {
+                closeActiveDropdown();
+            }
+        });
+
+        // Mode/Phase Badge Selector Dropdown
+        function showModeDropdown(projectId, badgeEl) {
+            closeActiveDropdown();
+            const p = state.projects.find(x => x.id === projectId);
+            if (!p) return;
+
+            const rect = badgeEl.getBoundingClientRect();
+            const dropdown = document.createElement('div');
+            dropdown.className = 'custom-dropdown-menu';
+            dropdown.style.top = `${rect.bottom + window.scrollY + 6}px`;
+            dropdown.style.left = `${rect.left + window.scrollX}px`;
+
+            const modes = [
+                { name: "1-Monthly Support", class: "monthly" },
+                { name: "2-Project Implementation", class: "project" },
+                { name: "3-HC Support", class: "hc" },
+                { name: "4-Hourly", class: "hourly" }
+            ];
+
+            modes.forEach(m => {
+                const item = document.createElement('div');
+                item.className = 'custom-dropdown-item';
+                item.innerHTML = `<span class="legend-dot ${m.class}"></span> ${m.name}`;
+                item.onclick = () => {
+                    p.mode = m.name;
+                    pushState(state);
+                    render();
+                    closeActiveDropdown();
+                    showToast("Category updated");
+                };
+                dropdown.appendChild(item);
+            });
+
+            const divider = document.createElement('div');
+            divider.className = 'dropdown-divider';
+            dropdown.appendChild(divider);
+
+            const customInputItem = document.createElement('div');
+            customInputItem.className = 'custom-dropdown-item-input';
+            customInputItem.innerHTML = `
+                <input type="text" placeholder="Custom mode..." id="custom-mode-input" style="flex:1; border:1px solid var(--border-color); background:var(--bg-primary); color:var(--text-primary); border-radius:30px; padding:4px 8px; font-size:12px; outline:none;">
+                <button onclick="applyCustomMode('${projectId}')" style="background:var(--accent-gradient); color:#fff; border:none; padding:4px 8px; border-radius:30px; font-size:12px; cursor:pointer; font-weight:700;"><i class="fas fa-check"></i></button>
+            `;
+            customInputItem.onclick = (e) => e.stopPropagation();
+            dropdown.appendChild(customInputItem);
+
+            document.body.appendChild(dropdown);
+            activeDropdown = dropdown;
+
+            setTimeout(() => {
+                document.getElementById('custom-mode-input').focus();
+            }, 50);
+        }
+
+        function applyCustomMode(projectId) {
+            const val = document.getElementById('custom-mode-input').value.trim();
+            if (val) {
+                const p = state.projects.find(x => x.id === projectId);
+                if (p) {
+                    p.mode = val;
+                    pushState(state);
+                    render();
+                    closeActiveDropdown();
+                    showToast("Custom mode applied");
+                }
+            }
+        }
+
+        // Availability Selector Dropdown
+        function showAvailDropdown(projectId, selectorEl) {
+            closeActiveDropdown();
+            const p = state.projects.find(x => x.id === projectId);
+            if (!p) return;
+
+            const rect = selectorEl.getBoundingClientRect();
+            const dropdown = document.createElement('div');
+            dropdown.className = 'custom-dropdown-menu';
+            dropdown.style.top = `${rect.bottom + window.scrollY + 6}px`;
+            dropdown.style.left = `${rect.left + window.scrollX}px`;
+
+            const statuses = [
+                { name: "Available", class: "available" },
+                { name: "Unavailable", class: "unavailable" },
+                { name: "On Leave", class: "on-leave" }
+            ];
+
+            statuses.forEach(s => {
+                const item = document.createElement('div');
+                item.className = 'custom-dropdown-item';
+                item.innerHTML = `<span class="avail-dot ${s.class}">●</span> ${s.name}`;
+                item.onclick = () => {
+                    p.availability.status = s.name;
+                    pushState(state);
+                    render();
+                    closeActiveDropdown();
+                    showToast("Resource status updated");
+                };
+                dropdown.appendChild(item);
+            });
+
+            document.body.appendChild(dropdown);
+            activeDropdown = dropdown;
+        }
+
+        // ── Drag & Drop Row Reordering ──
+        function enableRowDrag(id) {
+            const tr = document.getElementById(`row-${id}`);
+            tr.setAttribute('draggable', 'true');
+            tr.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', id);
+                tr.classList.add('dragging');
+            });
+            tr.addEventListener('dragend', () => {
+                tr.removeAttribute('draggable');
+                tr.classList.remove('dragging');
+                document.querySelectorAll('.project-row').forEach(row => row.classList.remove('drag-over'));
+            });
+        }
+
+        function disableRowDrag(id) {
+            const tr = document.getElementById(`row-${id}`);
+            tr.removeAttribute('draggable');
+        }
+
+        function onRowDragOver(e, targetIndex) {
+            e.preventDefault();
+            const tr = e.currentTarget;
+            tr.classList.add('drag-over');
+        }
+
+        function onRowDragLeave(e) {
+            const tr = e.currentTarget;
+            tr.classList.remove('drag-over');
+        }
+
+        function onRowDrop(e, targetIndex) {
+            e.preventDefault();
+            const draggedId = e.dataTransfer.getData('text/plain');
+            const draggedIndex = state.projects.findIndex(x => x.id === draggedId);
+
+            if (draggedIndex !== -1 && draggedIndex !== targetIndex) {
+                const item = state.projects.splice(draggedIndex, 1)[0];
+                state.projects.splice(targetIndex, 0, item);
+                pushState(state);
+                render();
+                showToast("Row order updated");
+            }
+        }
+
+        // ── Row Insertion & Deletion ──
+        function addProject() {
+            const newId = 'proj-' + Date.now();
+            const newProject = {
+                id: newId,
+                mode: "2-Project Implementation",
+                name: "New Project Title",
+                openItems: ["Click here to edit action item"],
+                owners: ["Owner Name"],
+                availability: {
+                    status: "Available",
+                    vacation: "Upcoming Vacation — NIL"
+                }
+            };
+            state.projects.push(newProject);
+            pushState(state);
+            render();
+            showToast("New project added", "fa-folder-plus");
+
+            // Scroll to highlight
+            setTimeout(() => {
+                const tr = document.getElementById(`row-${newId}`);
+                if (tr) {
+                    tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    tr.classList.add('highlight-new');
+                }
+            }, 100);
+        }
+
+        function deleteProject(id) {
+            const index = state.projects.findIndex(x => x.id === id);
+            if (index !== -1) {
+                const name = state.projects[index].name;
+                if (confirm(`Are you sure you want to delete "${name || 'New Project Title'}"?`)) {
+                    state.projects.splice(index, 1);
+                    pushState(state);
+                    render();
+                    showToast("Project deleted", "fa-trash");
+                }
+            }
+        }
+
+        // ── Utility Helpers ──
+        function getBadgeClass(mode) {
+            const m = mode.toLowerCase();
+            if (m.includes("monthly") || m.includes("1-")) return "monthly";
+            if (m.includes("project") || m.includes("2-")) return "project";
+            if (m.includes("hc") || m.includes("3-")) return "hc";
+            if (m.includes("hourly") || m.includes("4-")) return "hourly";
+            return "custom";
+        }
+
+        function getBadgeIcon(mode) {
+            const m = mode.toLowerCase();
+            if (m.includes("monthly") || m.includes("1-")) return `<i class="fas fa-calendar-week"></i>`;
+            if (m.includes("project") || m.includes("2-")) return `<i class="fas fa-code-branch"></i>`;
+            if (m.includes("hc") || m.includes("3-")) return `<i class="fas fa-hand-holding-heart"></i>`;
+            if (m.includes("hourly") || m.includes("4-")) return `<i class="fas fa-clock"></i>`;
+            return `<i class="fas fa-tag"></i>`;
+        }
+
+        function showToast(message, icon = "fa-check-circle") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas ${icon}" style="color:var(--accent-color)"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            state.theme = next;
+            localStorage.setItem('project_dashboard_theme', next);
+            updateThemeIcon(next);
+            localStorage.setItem('project_dashboard_state', JSON.stringify(state));
+            showToast(`Switched to ${next} theme`, next === 'dark' ? 'fa-moon' : 'fa-sun');
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-toggle-icon');
+            if (theme === 'dark') {
+                icon.className = 'fas fa-sun';
+                icon.parentElement.title = 'Switch to Light Mode';
+            } else {
+                icon.className = 'fas fa-moon';
+                icon.parentElement.title = 'Switch to Dark Mode';
+            }
+        }
+
+        // Export/Import JSON Data
+        function exportData() {
+            const dataStr = JSON.stringify(state, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `project-status-dashboard-${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(dataStr).then(() => {
+                showToast("Data downloaded & copied to clipboard");
+            }).catch(() => {
+                showToast("Data exported successfully");
+            });
+        }
+
+        function triggerImport() {
+            document.getElementById('import-file-input').click();
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const imported = JSON.parse(evt.target.result);
+                    if (imported && Array.isArray(imported.projects)) {
+                        state = {
+                            theme: imported.theme || state.theme || 'dark',
+                            title: imported.title || 'Project Status Dashboard',
+                            date: imported.date || 'Tuesday, 11 August 2026',
+                            projects: imported.projects
+                        };
+                        pushState(state);
+                        render();
+                        showToast("Dashboard data imported", "fa-file-import");
+                    } else {
+                        alert("Invalid file: projects list not recognized.");
+                    }
+                } catch(err) {
+                    alert("Error parsing JSON. Check that it is a valid backup configuration file.");
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
