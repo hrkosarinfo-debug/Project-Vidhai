@@ -1,0 +1,11 @@
+# Ignore large videos
+Videos/
+*.mp4
+*.MOV
+*.avi
+*.mkv
+
+# Ignore temp/OS files
+desktop.ini
+.DS_Store
+Thumbs.db
