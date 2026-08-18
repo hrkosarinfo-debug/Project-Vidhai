@@ -1,73 +1,64 @@
-# AI Projects Hub
+# Unified AI Platform
 
-This repository is a centralized hub for all AI-related projects, including UI/UX design wireframes, software development projects, meeting minutes, daily reports, and operational notes.
+A centralized, AI-powered master platform designed to integrate with multiple leading AI models (OpenAI, Anthropic, Gemini, Stable Diffusion, etc.) and consolidate diverse workflow categories under a single interface.
 
-## 📂 Repository Structure
+## 📂 Project Structure
 
-- **`Projects/`**: Categorized business and technical projects.
-  - **`AlMailem_Loyalty/`**: AlMailem Loyalty Program plans, observations, and deepseek mockups.
-  - **`IT_Reports/`**: Daily logs, reports, and status updates.
-  - **`Ooredoo/`**: Minutes of meetings, task statuses, and deepseek chat mockups.
-  - **`Transport_Field/`**: Field visit reports and HTML templates.
-- **`Setup_Guides/`**: Helpful guides on local setup, configurations, and environment installations.
-- **`Videos/`** *(Local Only - Git Ignored)*: Large recordings of meetings and sync calls. (This folder contains files larger than 100MB which are excluded from GitHub to prevent upload limits).
+- **`frontend/`**: Next.js (React) application for the primary user interface.
+- **`backend/`**: FastAPI (Python) backend orchestrator and model routing gateway.
+- **`config/`**: Configuration files and environment templates.
+- **`docs/`**: Strategic roadmap, system design documentation, and setup files.
 
 ---
 
-## 🔄 How to Synchronize Your Folder with GitHub
+## ⚡ Setup & Local Development
 
-We have configured a simple double-click sync script for you.
+### 1. Frontend (Next.js)
+1. Navigate to the `frontend/` directory.
+2. Run `npm install` to install node dependencies.
+3. Run `npm run dev` to start the frontend development server at `http://localhost:3000`.
 
-### Step 1: Initial Login (One-Time Setup)
-To connect this folder with your GitHub account:
-1. Open your Windows **PowerShell** or **Command Prompt**.
-2. Type `gh auth login` and press **Enter**.
-3. Follow the prompts:
-   - Select **GitHub.com**
-   - Select **HTTPS**
-   - Authenticate with your GitHub credentials (choose **Login with a web browser**).
-   - Copy the one-time code shown in terminal, press Enter to open your browser, paste the code, and click **Authorize**.
-
-### Step 2: Double-Click Sync
-To sync any changes (edits, new files, deleted files) to GitHub:
-1. Double-click the **`sync.bat`** file located in the root of the `AI` folder.
-2. It will automatically download changes from GitHub (`git pull`), stage your local edits (`git add`), commit them (`git commit`), and upload them to GitHub (`git push`).
+### 2. Backend (FastAPI)
+1. Navigate to the `backend/` directory.
+2. (Optional) Create a python virtual environment: `python -m venv venv` and activate it.
+3. Install Python requirements: `pip install -r requirements.txt`.
+4. Run the API server: `uvicorn main:app --reload` at `http://localhost:8000`.
 
 ---
 
-## 🛠️ Common Operations Guide
+## 🔄 Bidirectional GitHub Sync
 
-### 1. Adding New Files / Folders
-* Put the new files or folders anywhere inside the `AI` directory (e.g., inside `Projects/Ooredoo`).
-* Double-click `sync.bat` to publish them to GitHub.
+We have configured a double-click sync script (`sync.bat`) to keep your local desktop workspace synchronized with your GitHub repository.
 
-### 2. Editing Existing Files
-* Open any file, make your changes, and save it.
-* Double-click `sync.bat` to push the updates.
+### Initial GitHub Login Setup:
+1. Open Windows **PowerShell** or **Command Prompt**.
+2. Run `gh auth login` and complete the browser verification:
+   * Select **GitHub.com**
+   * Select **HTTPS**
+   * Select **Login with a web browser** (copy the code and paste it in the browser window).
 
-### 3. Renaming Folders
-* Rename the folder locally in Windows Explorer.
-* Double-click `sync.bat` to update the structure on GitHub.
-
-### 4. Deleting Files
-* Delete the file or folder locally.
-* Double-click `sync.bat`. Git will register the deletion and remove it from GitHub.
+### Running Sync:
+* To download changes from GitHub and push your local edits, simply **double-click the `sync.bat` file** in the root folder.
 
 ---
 
-## ⚡ Handling Merge Conflicts
+## 🛠️ Operations Guide & Merge Conflicts
 
-If you edit the same file on the GitHub web interface and your local computer without syncing first, you might get a **Merge Conflict** when running `sync.bat`.
+### Common Operations
+* **Add new files**: Add them directly to the `frontend/` or `backend/` directories, then run `sync.bat`.
+* **Delete files**: Remove them locally and run `sync.bat`.
+* **Rename folders**: Rename them locally and run `sync.bat`.
 
-### How to resolve it:
-1. Open the conflicted file in a text editor (e.g. Notepad).
-2. Look for conflict markers like this:
+### Handling Merge Conflicts
+If you edit the same file on GitHub and locally without running `sync.bat` first, Git might flag a conflict. To resolve it:
+1. Open the conflicted file in a text editor.
+2. Locate the conflict markers:
    ```text
    <<<<<<< HEAD
-   This is your local change.
+   [Your local changes]
    =======
-   This is the change someone made on the GitHub website.
+   [Changes from GitHub]
    >>>>>>> main
    ```
-3. Edit the file to delete the markers (`<<<<<<<`, `=======`, `>>>>>>>`) and keep the correct version of the text.
-4. Save the file and double-click `sync.bat` again to complete the sync!
+3. Edit the file to select the correct code and delete the markers (`<<<<<<<`, `=======`, `>>>>>>>`).
+4. Save the file and run `sync.bat` again.

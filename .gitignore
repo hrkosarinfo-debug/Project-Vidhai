@@ -1,17 +1,39 @@
-# Ignore large video files
-Videos/
-*.mp4
-*.MOV
-*.avi
-*.mkv
+# Next.js / Node
+node_modules/
+.next/
+out/
+build/
+dist/
 
-# Ignore installation binaries
-*.exe
-*.msi
-*.zip
-*.7z
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Ignore OS files
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
 desktop.ini
 .DS_Store
 Thumbs.db
