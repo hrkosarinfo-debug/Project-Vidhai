@@ -1,6 +1,6 @@
-# Kosar Infotech Car Company
+# KIPL Cabs (Kosar Infotech Private Limited)
 
-Official web application for **Kosar Infotech Cabs**, showcasing our corporate and consumer taxi services. 
+Official web application for **KIPL Cabs**, showcasing our corporate and consumer taxi services. 
 
 We manage a fleet of **40+ vehicles** providing reliable, fast, and comfortable transport options under three core divisions:
 1. **IT Cabs** (Corporate employee transportation solutions)

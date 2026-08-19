@@ -1,6 +1,6 @@
 @echo off
 echo ==============================================
-echo Synchronizing Kosar Infotech website with GitHub...
+echo Synchronizing KIPL website with GitHub...
 echo ==============================================
 
 :: Navigate to the directory of the batch file
