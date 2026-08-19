@@ -123,15 +123,32 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="trip-distance">Approximate Distance (in km)</label>
-                            <input type="number" id="trip-distance" min="1" max="1000" placeholder="Enter distance" required>
+                            <label for="booking-name">Your Name</label>
+                            <input type="text" id="booking-name" placeholder="Enter your full name" required>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block" id="btn-calc">Get Estimate</button>
+                        <div class="form-group">
+                            <label for="booking-phone">Phone Number</label>
+                            <input type="tel" id="booking-phone" placeholder="Enter contact number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pickup-location">Pickup Location (From)</label>
+                            <input type="text" id="pickup-location" placeholder="Enter pickup address in Coimbatore / TN / Kerala..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dropoff-location">Drop-off Location (To)</label>
+                            <input type="text" id="dropoff-location" placeholder="Enter drop-off address in Coimbatore / TN / Kerala..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="trip-distance">Driving Distance (in km)</label>
+                            <input type="number" id="trip-distance" placeholder="Calculated automatically..." readonly required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block" id="btn-calc">Book Cab Now</button>
                     </form>
                     <div id="calc-result" class="hidden">
-                        <h3>Estimated Fare</h3>
+                        <h3>Booking Confirmation</h3>
                         <div class="fare-value" id="fare-amount">₹0.00</div>
                         <p class="fare-desc" id="fare-details">Including base fare and distance calculation.</p>
+                        <p style="color: var(--success); font-weight: bold; margin-top: 10px;" id="booking-status-msg"></p>
                     </div>
                 </div>
             </div>
@@ -275,6 +292,8 @@
         </div>
     </footer>
 
+    <!-- Google Maps API (Insert your actual key below to enable place autocomplete) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&libraries=places" async defer></script>
     <script src="script.js"></script>
 </body>
 </html>
